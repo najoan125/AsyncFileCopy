@@ -5,6 +5,7 @@ import kr.hyfata.najoan.async.filecopy.FileCopyStatus;
 import kr.hyfata.najoan.async.filecopy.util.FileUtil;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -12,6 +13,7 @@ import java.util.concurrent.Executors;
 public class AsyncFileCopyHandler {
     private FileCopyProgress[] progressList;
     private final String jsonFilePath;
+    private int copiesLength;
 
     public AsyncFileCopyHandler(String jsonFilePath) {
         this.jsonFilePath = jsonFilePath;
@@ -21,10 +23,14 @@ public class AsyncFileCopyHandler {
         return progressList;
     }
 
+    public int getCopiesLength() {
+        return copiesLength;
+    }
+
     public void build() {
         try {
             JsonParser jsonParser = new JsonParser(jsonFilePath);
-            int copiesLength = jsonParser.getCopiesLength();
+            copiesLength = jsonParser.getCopiesLength();
             progressList = new FileCopyProgress[copiesLength];
             ExecutorService executorService = Executors.newFixedThreadPool(copiesLength);
 
@@ -46,7 +52,6 @@ public class AsyncFileCopyHandler {
         File sourceFile = new File(source);
         File targetFile = new File(destination);
         FileCopyProgress progress = new FileCopyProgress(sourceFile.toPath());
-        progressList[index] = progress;
 
         try {
             if (sourceFile.isDirectory()) {
@@ -57,7 +62,12 @@ public class AsyncFileCopyHandler {
             progress.setStatus(FileCopyStatus.COMPLETE);
         } catch (IOException e) {
             progress.setStatus(FileCopyStatus.FAILED);
-            e.printStackTrace(System.err);
+            if (e instanceof FileNotFoundException) {
+                System.err.println("File not found: " + e.getMessage());
+            } else {
+                e.printStackTrace(System.err);
+            }
         }
+        progressList[index] = progress;
     }
 }

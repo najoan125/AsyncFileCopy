@@ -10,7 +10,9 @@ public class AsyncFileCopy {
         AsyncFileCopyHandler handler = new AsyncFileCopyHandler(jsonFilePath);
         handler.build();
 
-        FileCopyProgressHandler progressHandler = new FileCopyProgressHandler(handler.getProgressList());
+        FileCopyProgressHandler progressHandler = new FileCopyProgressHandler(
+                handler.getProgressList(), handler.getCopiesLength()
+        );
         progressHandler.build();
     }
 }

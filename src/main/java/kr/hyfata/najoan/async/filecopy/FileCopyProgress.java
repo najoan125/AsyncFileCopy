@@ -15,16 +15,19 @@ public class FileCopyProgress {
     private long temp;
 
     public FileCopyProgress(Path source) {
+        long totalSize1;
         this.fileName = source.getFileName().toString();
         if (Files.isDirectory(source)) {
-            this.totalSize = FileUtil.calculateDirectorySize(source.toFile());
+            totalSize1 = FileUtil.calculateDirectorySize(source.toFile());
         } else {
             try {
-                this.totalSize = Files.size(source);
+                totalSize1 = Files.size(source);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                totalSize1 = 0L;
+                status = FileCopyStatus.FAILED;
             }
         }
+        this.totalSize = totalSize1;
     }
 
     public void updateCopiedSize(long size) {

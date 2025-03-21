@@ -10,12 +10,14 @@ import java.util.concurrent.TimeUnit;
 public class FileCopyProgressHandler {
     private final FileCopyProgress[] progressList;
     ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+    int copiesLength;
 
     final int period = 1;
     final TimeUnit timeUnit = TimeUnit.SECONDS;
 
-    public FileCopyProgressHandler(FileCopyProgress[] progressList) {
+    public FileCopyProgressHandler(FileCopyProgress[] progressList, int copiesLength) {
         this.progressList = progressList;
+        this.copiesLength = copiesLength;
     }
 
     public void build() {
@@ -54,7 +56,7 @@ public class FileCopyProgressHandler {
             System.out.println();
         }
 
-        if (finishCount == progressList.length) {
+        if (finishCount == copiesLength) {
             scheduledExecutorService.shutdownNow();
         }
     }
@@ -66,7 +68,6 @@ public class FileCopyProgressHandler {
         }
 
         int paddingLength = maxLength - name.length();
-
         return name + " ".repeat(Math.max(0, paddingLength));
     }
 }
