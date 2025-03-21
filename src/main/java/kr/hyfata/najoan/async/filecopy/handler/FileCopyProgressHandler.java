@@ -11,8 +11,8 @@ public class FileCopyProgressHandler {
     private final FileCopyProgress[] progressList;
     ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 
-    private int period = 1;
-    private TimeUnit timeUnit = TimeUnit.SECONDS;
+    final int period = 1;
+    final TimeUnit timeUnit = TimeUnit.SECONDS;
 
     public FileCopyProgressHandler(FileCopyProgress[] progressList) {
         this.progressList = progressList;
@@ -32,13 +32,20 @@ public class FileCopyProgressHandler {
     }
 
     private void print() {
-        if (progressList == null || progressList[0] == null) {
+        if (progressList == null) {
             return;
+        } else {
+            for (FileCopyProgress progress : progressList) {
+                if (progress == null) {
+                    return;
+                }
+            }
         }
+
         int finishCount = 0;
         System.out.println();
         for (FileCopyProgress progress : progressList) {
-            System.out.print(progress.getFileName() + " : " + progress.getStatus().getName());
+            System.out.print(getFormattedName(progress.getFileName()) + " : " + progress.getStatus().getName());
             if (progress.getStatus() == FileCopyStatus.COPYING) {
                 System.out.printf(" - %.1f%% (%.1f MB/s)", progress.getProgress(), getSpeed(progress));
             } else {
@@ -52,11 +59,14 @@ public class FileCopyProgressHandler {
         }
     }
 
-    public void setPeriod(int period) {
-        this.period = period;
-    }
+    private String getFormattedName(String name) {
+        int maxLength = 0;
+        for (FileCopyProgress progress : progressList) {
+            maxLength = Math.max(progress.getFileName().length(), maxLength);
+        }
 
-    public void setTimeUnit(TimeUnit timeUnit) {
-        this.timeUnit = timeUnit;
+        int paddingLength = maxLength - name.length();
+
+        return name + " ".repeat(Math.max(0, paddingLength));
     }
 }
