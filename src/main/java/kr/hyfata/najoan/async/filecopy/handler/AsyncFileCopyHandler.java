@@ -38,7 +38,7 @@ public class AsyncFileCopyHandler {
 
             executorService.shutdown();
         } catch (IOException e) {
-            e.printStackTrace(System.err);
+            throw new RuntimeException(e);
         }
     }
 
