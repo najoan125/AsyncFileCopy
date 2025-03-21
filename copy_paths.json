@@ -2,11 +2,11 @@
   "copies": [
     {
       "source": "%appdata%\\source",
-      "destination": ""
+      "destination": "%HomePath\\source"
     },
     {
-      "source": "%appdata%\\osu",
-      "destination": "E:\\초기화\\백업\\appdata\\osu"
+      "source": "%appdata%\\source2\\text.txt",
+      "destination": "%ProgramFiles%\\test\\text.txt"
     }
   ]
 }
