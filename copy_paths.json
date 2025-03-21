@@ -1,0 +1,12 @@
+{
+  "copies": [
+    {
+      "source": "%appdata%\\source",
+      "destination": ""
+    },
+    {
+      "source": "%appdata%\\osu",
+      "destination": "E:\\초기화\\백업\\appdata\\osu"
+    }
+  ]
+}
