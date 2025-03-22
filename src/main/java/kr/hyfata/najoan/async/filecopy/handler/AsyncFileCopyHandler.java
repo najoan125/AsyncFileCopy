@@ -7,8 +7,7 @@ import kr.hyfata.najoan.async.filecopy.util.FileUtil;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.CompletableFuture;
 
 public class AsyncFileCopyHandler {
     private FileCopyProgress[] progressList;
@@ -32,17 +31,13 @@ public class AsyncFileCopyHandler {
             JsonParser jsonParser = new JsonParser(jsonFilePath);
             copiesLength = jsonParser.getCopiesLength();
             progressList = new FileCopyProgress[copiesLength];
-            ExecutorService executorService = Executors.newFixedThreadPool(copiesLength);
 
-            // submit to executor service
             for (int i = 0; i < copiesLength; i++) {
                 int index = i;
                 String source = jsonParser.getSourcePath(index);
                 String destination = jsonParser.getDestinationPath(index);
-                executorService.execute(() -> copyFiles(source, destination, index));
+                CompletableFuture.runAsync(()-> copyFiles(source, destination, index));
             }
-
-            executorService.shutdown();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -66,7 +61,7 @@ public class AsyncFileCopyHandler {
             if (e instanceof FileNotFoundException) {
                 System.err.println("File not found: " + e.getMessage());
             } else {
-                System.err.println("IOException occurred: " + e.getMessage()); // 추가된 로깅
+                System.err.println("IOException occurred: " + e.getMessage());
             }
         }
     }

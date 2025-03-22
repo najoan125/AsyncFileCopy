@@ -11,6 +11,7 @@ public class FileCopyProgressHandler {
     private final FileCopyProgress[] progressList;
     ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
     int copiesLength;
+    int loadedCount = 0;
 
     final int period = 1;
     final TimeUnit timeUnit = TimeUnit.SECONDS;
@@ -35,13 +36,11 @@ public class FileCopyProgressHandler {
 
     private void print() {
         if (progressList == null) {
+            System.out.println("loading...");
             return;
-        } else {
-            for (FileCopyProgress progress : progressList) {
-                if (progress == null) {
-                    return;
-                }
-            }
+        } else if (loadedCount != copiesLength) {
+            printLoadedCount();
+            return;
         }
 
         int finishCount = 0;
@@ -59,6 +58,16 @@ public class FileCopyProgressHandler {
         if (finishCount == copiesLength) {
             scheduledExecutorService.shutdownNow();
         }
+    }
+
+    private void printLoadedCount() {
+        loadedCount = 0;
+        for (FileCopyProgress progress : progressList) {
+            if (progress != null) {
+                loadedCount++;
+            }
+        }
+        System.out.printf("(%d/%d) loaded!\n", loadedCount, copiesLength);
     }
 
     private String getFormattedName(String name) {
