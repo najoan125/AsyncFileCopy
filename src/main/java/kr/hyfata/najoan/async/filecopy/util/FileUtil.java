@@ -35,6 +35,13 @@ public class FileUtil {
     }
 
     public static void copyFileWithProgress(File sourceFile, File targetFile, FileCopyProgress progress) throws IOException {
+        File parentDir = targetFile.getParentFile();
+        if (parentDir != null && !parentDir.exists()) {
+            if (!parentDir.mkdirs()) {
+                throw new IOException("Failed to create target directory: " + parentDir);
+            }
+        }
+
         try (FileInputStream fis = new FileInputStream(sourceFile);
              CountingInputStream cis = new CountingInputStream(fis);
              FileOutputStream fos = new FileOutputStream(targetFile)) {

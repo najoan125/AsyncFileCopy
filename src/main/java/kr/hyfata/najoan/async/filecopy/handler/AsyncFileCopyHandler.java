@@ -52,6 +52,7 @@ public class AsyncFileCopyHandler {
         File sourceFile = new File(source);
         File targetFile = new File(destination);
         FileCopyProgress progress = new FileCopyProgress(sourceFile.toPath());
+        progressList[index] = progress;
 
         try {
             if (sourceFile.isDirectory()) {
@@ -65,9 +66,8 @@ public class AsyncFileCopyHandler {
             if (e instanceof FileNotFoundException) {
                 System.err.println("File not found: " + e.getMessage());
             } else {
-                e.printStackTrace(System.err);
+                System.err.println("IOException occurred: " + e.getMessage()); // 추가된 로깅
             }
         }
-        progressList[index] = progress;
     }
 }
